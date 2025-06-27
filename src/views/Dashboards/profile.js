@@ -14,6 +14,7 @@ function Profile({ token }) {
     lastname: "",
     email: "",
     age: "",
+    profileImage: null,
   });
   const [isConsulting, setIsConsulting] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -55,9 +56,21 @@ function Profile({ token }) {
     console.log("HELLO");
     try {
       const token = localStorage.getItem("token");
-      const response = await axios.put("users/profile", user, {
+      const formdata = new FormData();
+      formdata.append("firstname", user.firstname);
+      formdata.append("lastname", user.lastname);
+      formdata.append("email", user.email);
+
+      if (user.profileImage) {
+        console.log("Profile image is set:", user.profileImage);
+        formdata.append("imageprofile", user.profileImage);
+      }
+      console.log("Form data prepared:", formdata.getAll("imageprofile"));
+
+      const response = await axios.put("users/profile", formdata, {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       });
       if (response.status === 200) {
@@ -118,6 +131,20 @@ function Profile({ token }) {
               />
             </Form.Group>
           </Row>
+          <Form.Group className="mb-3" controlId="formGridAddress1">
+            <Form.Label>Profile Image</Form.Label>
+            <Form.Control
+              value={user?.profileImage}
+              type="file"
+              accept="image/*"
+              name="profileImage"
+              placeholder="Enter profile image URL"
+              disabled={isConsulting}
+              onChange={(e) =>
+                setUser({ ...user, profileImage: e.target.files[0] })
+              }
+            />
+          </Form.Group>
 
           <Form.Group className="mb-3" controlId="formGridAddress2">
             <Form.Label>Email</Form.Label>
