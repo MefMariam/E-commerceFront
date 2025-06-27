@@ -14,7 +14,7 @@ function Profile({ token }) {
     lastname: "",
     email: "",
     age: "",
-    profileImage: null,
+    profileImage: "",
   });
   const [isConsulting, setIsConsulting] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -38,6 +38,7 @@ function Profile({ token }) {
             firstname: response.data?.firstname,
             email: response.data?.email,
             age: response.data?.age,
+            profileImage: response.data?.profileImage || null,
           }));
           setLoading(false);
         })
@@ -61,10 +62,8 @@ function Profile({ token }) {
       formdata.append("lastname", user.lastname);
       formdata.append("email", user.email);
 
-      if (user.profileImage) {
-        console.log("Profile image is set:", user.profileImage);
-        formdata.append("imageprofile", user.profileImage);
-      }
+      console.log("Profile image is set:", user.profileImage);
+      formdata.append("imageprofile", user.profileImage);
       console.log("Form data prepared:", formdata.getAll("imageprofile"));
 
       const response = await axios.put("users/profile", formdata, {
@@ -134,7 +133,6 @@ function Profile({ token }) {
           <Form.Group className="mb-3" controlId="formGridAddress1">
             <Form.Label>Profile Image</Form.Label>
             <Form.Control
-              value={user?.profileImage}
               type="file"
               accept="image/*"
               name="profileImage"
